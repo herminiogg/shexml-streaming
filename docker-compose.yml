@@ -1,0 +1,49 @@
+services:
+  sse:
+    build: ./src/test/resources/sse/.
+    container_name: SSE_endpoint_plain_text
+    command: gunicorn --chdir /sse --bind 0.0.0.0:8000 -w 4 films_sse_flask:app
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./src/test/resources/sse:/sse
+  sse_json:
+    build: ./src/test/resources/sse/.
+    container_name: SSE_endpoint_json
+    command: gunicorn --chdir /sse --bind 0.0.0.0:8000 -w 4 films_sse_json_flask:app
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./src/test/resources/sse:/sse
+  sse_xml:
+    build: ./src/test/resources/sse/.
+    container_name: SSE_endpoint_xml
+    command: gunicorn --chdir /sse --bind 0.0.0.0:8000 -w 4 films_sse_xml_flask:app
+    ports:
+      - "8003:8000"
+    volumes:
+      - ./src/test/resources/sse:/sse
+  websocket_json:
+    build: ./src/test/resources/websocket/.
+    container_name: Websocket_endpoint_json
+    command: node films_websocket_json.js
+    ports:
+      - "8004:8765"
+    volumes:
+      - ./src/test/resources/websocket:/websocket
+  websocket_xml:
+    build: ./src/test/resources/websocket/.
+    container_name: Websocket_endpoint_xml
+    command: node films_websocket_xml.js
+    ports:
+      - "8005:8765"
+    volumes:
+      - ./src/test/resources/websocket:/websocket
+  websocket_csv:
+    build: ./src/test/resources/websocket/.
+    container_name: Websocket_endpoint_csv
+    command: node films_websocket_csv.js
+    ports:
+      - "8006:8765"
+    volumes:
+      - ./src/test/resources/websocket:/websocket

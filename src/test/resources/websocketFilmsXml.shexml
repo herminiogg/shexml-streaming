@@ -1,0 +1,15 @@
+PREFIX : <http://example.com/>
+STREAM films_stream <ws://localhost:8005>
+ITERATOR film_xml <xpath: /films> {
+  FIELD id <film/@id>
+  FIELD name <film/name>
+  FIELD year <film/year>
+}
+
+EXPRESSION films <films_stream.film_xml>
+
+:Films :[films.id] {
+  :type :Film ;
+  :name [films.name] ;
+  :year [films.year] ;
+}
