@@ -1,5 +1,5 @@
 PREFIX : <http://example.com/>
-STREAM films_stream <ws://localhost:8004>
+STREAM films_stream <ws://127.0.0.1:8004>
 ITERATOR film_json <jsonpath: $> {
   FIELD id <id>
   FIELD name <name>
