@@ -24,27 +24,27 @@ services:
     volumes:
       - ./src/test/resources/sse:/sse
   websocket_json:
-    build: ./src/test/resources/websocket/.
+    image: node:24
     container_name: Websocket_endpoint_json
-    command: node films_websocket_json.js
+    command: bash -c "npm install && node films_websocket_json.js"
     ports:
       - "8004:8765"
     volumes:
       - ./src/test/resources/websocket:/websocket
     working_dir: /websocket
   websocket_xml:
-    build: ./src/test/resources/websocket/.
+    image: node:24
     container_name: Websocket_endpoint_xml
-    command: node films_websocket_xml.js
+    command: bash -c "npm install && node films_websocket_xml.js"
     ports:
       - "8005:8765"
     volumes:
       - ./src/test/resources/websocket:/websocket
     working_dir: /websocket
   websocket_csv:
-    build: ./src/test/resources/websocket/.
+    image: node:24
     container_name: Websocket_endpoint_csv
-    command: node films_websocket_csv.js
+    command: bash -c "npm install && node films_websocket_csv.js"
     ports:
       - "8006:8765"
     volumes:
