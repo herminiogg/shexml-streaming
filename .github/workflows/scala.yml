@@ -19,3 +19,5 @@ jobs:
         run: docker compose up -d
       - name: Run tests
         run: sbt --mem 2048 "+ test"
+      - name: Docker compose logs
+        run: docker compose logs
