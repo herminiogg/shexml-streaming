@@ -1,4 +1,5 @@
 # shexml-streaming
+[![Scala CI](https://github.com/herminiogg/shexml-streaming/actions/workflows/scala.yml/badge.svg)](https://github.com/herminiogg/shexml-streaming/actions/workflows/scala.yml)
 
 This is a wrapper over the [ShExML engine](https://github.com/herminiogg/ShExML) allowing to
 consume asynchronous data streams in a non-blocking fashion. It introduces the `STREAM` declaration which
@@ -210,14 +211,6 @@ $ sbt "++<version> test"
 
 ### Dependencies
 The following dependencies are used by this library:
-
-"com.softwaremill.sttp.client4" %% "core" % "4.0.9",
-"com.softwaremill.sttp.client4" %% "monix" % "4.0.9",
-"io.monix" %% "monix" % "3.4.0",
-"io.reactivex.rxjava3" % "rxjava" % "3.1.8",
-"info.picocli" % "picocli" % "4.7.7",
-"com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
-"org.scalatest" %% "scalatest" % "3.2.9" % "test"
 
 | Dependency                                 | License                                 |
 |--------------------------------------------|-----------------------------------------|
