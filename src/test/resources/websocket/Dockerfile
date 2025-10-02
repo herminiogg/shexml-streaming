@@ -1,3 +1,3 @@
 FROM node:24
-WORKDIR /websocket
+#WORKDIR /websocket
 RUN npm install ws
