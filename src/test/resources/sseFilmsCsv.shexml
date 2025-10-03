@@ -1,0 +1,17 @@
+PREFIX : <http://example.com/>
+STREAM films_stream <http://localhost:8007/films>
+ITERATOR film_csv <csvPerRow> {
+  FIELD event_id <id>
+  FIELD id <data_id>
+  FIELD name <data_name>
+  FIELD year <data_year>
+}
+
+EXPRESSION films <films_stream.film_csv>
+
+:Films :[films.id] {
+  :type :Film ;
+  :name [films.name] ;
+  :year [films.year] ;
+  :event_id [films.event_id] ;
+}

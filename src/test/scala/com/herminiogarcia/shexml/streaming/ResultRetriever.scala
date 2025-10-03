@@ -8,12 +8,12 @@ import java.io.File
 
 trait ResultRetriever {
 
-  def retrieveResult(filepath: String): Model = {
+  def retrieveResult(filepath: String, normaliseURIs: Boolean = false, inferDatatypes: Boolean = false): Model = {
     val source = scala.io.Source.fromFile(new File(filepath))
     val mappingRules = source.mkString
     source.close()
     val dataset = DatasetFactory.create()
-    new StreamMappingLauncher()
+    new StreamMappingLauncher(inferenceDatatype = inferDatatypes, normaliseURIs = normaliseURIs)
       .launchMapping(mappingRules)
       .flatMap(_.foldLeftL(dataset.getDefaultModel)((a, b) => a.add(b.getDefaultModel)))
       .runSyncUnsafe()

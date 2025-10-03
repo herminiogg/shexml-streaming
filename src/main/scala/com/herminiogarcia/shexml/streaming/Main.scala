@@ -23,7 +23,7 @@ object Main {
   description = Array("Map and merge heterogeneous data sources using ShExML over streams"))
 class Main extends Callable[Int] {
 
-  @Option(names = Array("-m", "--mapping"), required = true, description = Array("Path to the file with the mappings. If '-' is provided as the path the engine will read from the standard input."))
+  @Option(names = Array("-m", "--mapping"), required = true, description = Array("Path to the file containing the mapping rules."))
   private var file: String = ""
 
   @Option(names = Array("-o", "--output"), description = Array("Path where the output file should be created. As a stream-based application the user is required to set the format to a RDF stream-compatible format or clean the output"))

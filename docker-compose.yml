@@ -23,6 +23,14 @@ services:
       - "8003:8000"
     volumes:
       - ./src/test/resources/sse:/sse
+  sse_csv:
+    build: ./src/test/resources/sse/.
+    container_name: SSE_endpoint_csv
+    command: gunicorn --chdir /sse --bind 0.0.0.0:8000 -w 4 films_sse_csv_flask:app
+    ports:
+      - "8007:8000"
+    volumes:
+      - ./src/test/resources/sse:/sse
   websocket_json:
     image: node:24
     container_name: Websocket_endpoint_json
