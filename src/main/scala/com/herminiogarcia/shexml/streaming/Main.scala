@@ -1,10 +1,12 @@
 package com.herminiogarcia.shexml.streaming
 
+import com.herminiogarcia.shexml.helper.PicocliLeftAlignedLayout
 import com.herminiogarcia.shexml.streaming.helpers.ObservablePrinter
 import monix.execution.Scheduler.Implicits.global
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
+
 import java.util.concurrent.Callable
 
 object Main {
@@ -12,7 +14,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     val commandLine = new CommandLine(new Main())
       .setPosixClusteredShortOptionsAllowed(false)
-    //.setHelpFactory(PicocliLeftAlignedLayout.createCustomizedUsageHelp())
+      .setHelpFactory(PicocliLeftAlignedLayout.createCustomizedUsageHelp())
     System.exit(commandLine.execute(args: _*))
   }
 }
