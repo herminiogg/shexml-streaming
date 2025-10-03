@@ -10,8 +10,8 @@ heavily based on the Reactive Programming precepts delegating the actual executi
 * Server-Sent Events (SSE) support
   * Inclusion of id, event and retry in the input data
   * Formats:
-    * JSON and XML
-    * Free text on data provided through CSV inputs
+    * JSON, XML and CSV
+    * Free text on data (internally converted to a CSV input)
 * Websockets support
   * Any format supported by ShExML
   * Unidirectional (only receiving messages)
@@ -116,7 +116,7 @@ EXPRESSION films <films_stream.film_json>
 ```
 
 #### Input JSON
-```json
+```
 event: new_item
 id: 1
 data: {"name": "film_1", "year": 1951}
@@ -136,9 +136,7 @@ for further reuse by other applications, the CLI will automatically subscribe to
 Usage: shexml-streaming [-h] [-id] [-nu] [-V] [-f=<format>] -m=<file>
                         [-o=<output>]
 Map and merge heterogeneous data sources using ShExML over streams
-  -m, --mapping=<file>       Path to the file with the mappings. If '-' is
-                               provided as the path the engine will read from
-                               the standard input.
+  -m, --mapping=<file>       Path to the file containing the mapping rules.
   -o, --output=<output>      Path where the output file should be created. As a
                                stream-based application the user is required to
                                set the format to a RDF stream-compatible format
