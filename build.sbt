@@ -16,5 +16,10 @@ lazy val root = (project in file("."))
       "info.picocli" % "picocli" % "4.7.7",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
       "org.scalatest" %% "scalatest" % "3.2.9" % "test"
-    )
+    ),
+    assembly / assemblyMergeStrategy := {
+      case PathList("META-INF", "services", xs @ _*) => MergeStrategy.concat
+      case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+      case x => MergeStrategy.first
+    }
   )
