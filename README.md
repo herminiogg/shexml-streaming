@@ -1,5 +1,8 @@
 # shexml-streaming
 [![Scala CI](https://github.com/herminiogg/shexml-streaming/actions/workflows/scala.yml/badge.svg)](https://github.com/herminiogg/shexml-streaming/actions/workflows/scala.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/com.herminiogarcia/shexml-streaming_3?color=blue)](https://central.sonatype.com/artifact/com.herminiogarcia/shexml-streaming_3)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17278967.svg)](https://doi.org/10.5281/zenodo.17278967)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/herminiogg/shexml-streaming/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/herminiogg/shexml-streaming)
 
 This is a wrapper over the [ShExML engine](https://github.com/herminiogg/ShExML) allowing to
 consume asynchronous data streams in a non-blocking fashion. It introduces the `STREAM` declaration which
