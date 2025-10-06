@@ -2,6 +2,7 @@ package com.herminiogarcia.shexml.streaming.handlers
 
 import cats.effect.ExitCase
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.tototoshi.csv.{CSVParser, CSVReader, DefaultCSVFormat}
 import com.typesafe.scalalogging.Logger
 import monix.eval.Task
 import monix.reactive.observers.Subscriber
@@ -14,6 +15,9 @@ import sttp.client4.impl.monix.MonixServerSentEvents
 import sttp.model.Uri
 import sttp.model.sse.ServerSentEvent
 import com.herminiogarcia.shexml.streaming.helpers.FormatParser.Implicits._
+
+import java.io.StringReader
+import javax.xml.parsers.DocumentBuilderFactory
 import scala.util.{Failure, Success, Try}
 
 class SSEHandler extends Handler {
@@ -60,9 +64,15 @@ class SSEHandler extends Handler {
         case Success(value) =>
           logger.debug("Event processed as an XML document")
           value
-        case Failure(_) =>
-          logger.debug("Event converted to CSV")
-          convertToCsvFormat(sse)
+        case Failure(_) => Try(convertToCsvFormat(sse)) match {
+          case Success(value) =>
+            logger.debug("Event processed as CSV document")
+            value
+          case Failure(_) =>
+            logger.debug("SSE event converted to CSV")
+            textToCsv(sse)
+        }
+
       }
     }
   }
@@ -79,15 +89,54 @@ class SSEHandler extends Handler {
   }
 
   private def convertToXmlDocument(sse: ServerSentEvent): String = {
-    val parsedDocument = sse.data.getOrElse("").toXml
-    parsedDocument.getDocumentElement.setAttribute("id", sse.id.getOrElse(""))
-    parsedDocument.getDocumentElement.setAttribute("event", sse.eventType.getOrElse(""))
-    parsedDocument.getDocumentElement.setAttribute("retry", sse.retry.map(_.toString).getOrElse("-1"))
-    parsedDocument.asString
+    val factory = DocumentBuilderFactory.newInstance()
+    val document = factory.newDocumentBuilder().newDocument()
+    val rootElement = document.createElement("sse")
+    document.appendChild(rootElement)
+    rootElement.appendChild(document.createElement("id")).setTextContent(sse.id.getOrElse(""))
+    rootElement.appendChild(document.createElement("event")).setTextContent(sse.eventType.getOrElse(""))
+    rootElement.appendChild(document.createElement("retry")).setTextContent(sse.retry.map(_.toString).getOrElse("-1"))
+    rootElement.appendChild(document.createElement("data"))
+      .appendChild(document.importNode(sse.data.getOrElse("").toXml.getDocumentElement, true))
+    document.asString
   }
 
   private def convertToCsvFormat(sse: ServerSentEvent): String = {
+    val id = sse.id.getOrElse("")
+    val event = sse.eventType.getOrElse("")
+    val retry = sse.retry.getOrElse(-1).toString
+    val data = sse.data.get
+    val fileDelimiter = inferCSVDelimiter(data)
+    implicit object MyCSVFormat extends DefaultCSVFormat {
+      override val delimiter = fileDelimiter
+    }
+    val allLines = CSVReader.open(new StringReader(data)).all()
+    if(!(allLines.size >= 2 && allLines.head.size - 1 == data.linesIterator.next().count(_ == fileDelimiter))) {
+      throw new Exception("Not in CSV format")
+    }
+    val headers = List("id", "event", "retry") ::: allLines.head.map("data_" + _)
+    val content = allLines.tail.map(List(id, event, retry) ::: _)
+    (headers :: content map { i =>
+      i.mkString(fileDelimiter.toString)
+    }).mkString("\n")
+  }
+
+  private def textToCsv(sse: ServerSentEvent): String = {
     "id;event;retry;data\n" +
       s"${sse.id.getOrElse("")};${sse.eventType.getOrElse("")};${sse.retry.getOrElse("")};${sse.data.getOrElse("")}"
+  }
+
+  private def inferCSVDelimiter(fileContent: String): Char = {
+    val comma = fileContent.count(_.equals(','))
+    val semicolon = fileContent.count(_.equals(';'))
+    val dot = fileContent.count(_.equals('.'))
+    val colon = fileContent.count(_.equals(':'))
+    val at = fileContent.count(_.equals('@'))
+    val sharp = fileContent.count(_.equals('#'))
+    val tab = fileContent.count(_.equals('\t'))
+    val map = Map(',' -> comma, ';' -> semicolon, '.' -> dot, ':' -> colon, '@' -> at, '#' -> sharp, '\t' -> tab)
+    val result = map.foldLeft(',')((greater, count) => if(map(greater) < count._2) count._1 else greater)
+    logger.debug(s"Inferred CSV delimiter is: $result")
+    result
   }
 }

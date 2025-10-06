@@ -1,10 +1,12 @@
 package com.herminiogarcia.shexml.streaming
 
+import com.herminiogarcia.shexml.helper.PicocliLeftAlignedLayout
 import com.herminiogarcia.shexml.streaming.helpers.ObservablePrinter
 import monix.execution.Scheduler.Implicits.global
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
+
 import java.util.concurrent.Callable
 
 object Main {
@@ -12,7 +14,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     val commandLine = new CommandLine(new Main())
       .setPosixClusteredShortOptionsAllowed(false)
-    //.setHelpFactory(PicocliLeftAlignedLayout.createCustomizedUsageHelp())
+      .setHelpFactory(PicocliLeftAlignedLayout.createCustomizedUsageHelp())
     System.exit(commandLine.execute(args: _*))
   }
 }
@@ -23,7 +25,7 @@ object Main {
   description = Array("Map and merge heterogeneous data sources using ShExML over streams"))
 class Main extends Callable[Int] {
 
-  @Option(names = Array("-m", "--mapping"), required = true, description = Array("Path to the file with the mappings. If '-' is provided as the path the engine will read from the standard input."))
+  @Option(names = Array("-m", "--mapping"), required = true, description = Array("Path to the file containing the mapping rules."))
   private var file: String = ""
 
   @Option(names = Array("-o", "--output"), description = Array("Path where the output file should be created. As a stream-based application the user is required to set the format to a RDF stream-compatible format or clean the output"))

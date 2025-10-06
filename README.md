@@ -10,8 +10,8 @@ heavily based on the Reactive Programming precepts delegating the actual executi
 * Server-Sent Events (SSE) support
   * Inclusion of id, event and retry in the input data
   * Formats:
-    * JSON and XML
-    * Free text on data provided through CSV inputs
+    * JSON, XML and CSV
+    * Free text on data (internally converted to a CSV input)
 * Websockets support
   * Any format supported by ShExML
   * Unidirectional (only receiving messages)
@@ -116,7 +116,7 @@ EXPRESSION films <films_stream.film_json>
 ```
 
 #### Input JSON
-```json
+```
 event: new_item
 id: 1
 data: {"name": "film_1", "year": 1951}
@@ -136,26 +136,23 @@ for further reuse by other applications, the CLI will automatically subscribe to
 Usage: shexml-streaming [-h] [-id] [-nu] [-V] [-f=<format>] -m=<file>
                         [-o=<output>]
 Map and merge heterogeneous data sources using ShExML over streams
-  -m, --mapping=<file>       Path to the file with the mappings. If '-' is
-                               provided as the path the engine will read from
-                               the standard input.
-  -o, --output=<output>      Path where the output file should be created. As a
-                               stream-based application the user is required to
-                               set the format to a RDF stream-compatible format
-                               or clean the output
-  -f, --format=<format>      Output format for RDF graph. Turtle, RDF/XML,
-                               N-Triples, etc. Default value: N-Triples.
-      -id, --inferenceDatatypes
-                             Use the inference system for choosing the best
-                               suited datatype for the generated literal.
-                               Without this option, and not declaring a
-                               datatype in the mapping rules, all the literals
-                               will be outputted as strings
-      -nu, --normaliseURIs   Activate the URI normalisation system which allows
-                               to avoid malformed URIs when using strings for
-                               URI creation
-  -h, --help                 Show this help message and exit.
-  -V, --version              Print version information and exit.
+  -m, --mapping=<file>         Path to the file containing the mapping rules.
+  -o, --output=<output>        Path where the output file should be created. As
+                                 a stream-based application the user is
+                                 required to set the format to a RDF
+                                 stream-compatible format or clean the output
+  -f, --format=<format>        Output format for RDF graph. Turtle, RDF/XML,
+                                 N-Triples, etc. Default value: N-Triples.
+  -id, --inferenceDatatypes    Use the inference system for choosing the best
+                                 suited datatype for the generated literal.
+                                 Without this option, and not declaring a
+                                 datatype in the mapping rules, all the
+                                 literals will be outputted as strings
+  -nu, --normaliseURIs         Activate the URI normalisation system which
+                                 allows to avoid malformed URIs when using
+                                 strings for URI creation
+  -h, --help                   Show this help message and exit.
+  -V, --version                Print version information and exit.
 ```
 
 ## Requirements

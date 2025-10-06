@@ -55,7 +55,7 @@ class StreamMappingLauncher(val inferenceDatatype: Boolean = false,
   private def launchStreamGeneration[T](mappingRules: String, streamSource: StreamSource, eventContent: String, shexmlGenerationMethod: String => T): T = {
     val intermediateShExML = mappingRules.replaceFirst("STREAM.+>", s"SOURCE ${streamSource.name} <stdin>")
     val precompiledShExML = shexmlMappingLauncher.precompile(intermediateShExML)
-    logger.info("Launching ShExML engine to convert received event")
+    logger.info("Launching the ShExML engine to convert the received event")
     logger.debug(s"Mapping rules for event processing: $precompiledShExML")
     val inputStream = new ByteArrayInputStream(eventContent.getBytes("UTF-8"))
     shexmlMappingLauncher.getClass.synchronized {
