@@ -136,24 +136,23 @@ for further reuse by other applications, the CLI will automatically subscribe to
 Usage: shexml-streaming [-h] [-id] [-nu] [-V] [-f=<format>] -m=<file>
                         [-o=<output>]
 Map and merge heterogeneous data sources using ShExML over streams
-  -m, --mapping=<file>       Path to the file containing the mapping rules.
-  -o, --output=<output>      Path where the output file should be created. As a
-                               stream-based application the user is required to
-                               set the format to a RDF stream-compatible format
-                               or clean the output
-  -f, --format=<format>      Output format for RDF graph. Turtle, RDF/XML,
-                               N-Triples, etc. Default value: N-Triples.
-      -id, --inferenceDatatypes
-                             Use the inference system for choosing the best
-                               suited datatype for the generated literal.
-                               Without this option, and not declaring a
-                               datatype in the mapping rules, all the literals
-                               will be outputted as strings
-      -nu, --normaliseURIs   Activate the URI normalisation system which allows
-                               to avoid malformed URIs when using strings for
-                               URI creation
-  -h, --help                 Show this help message and exit.
-  -V, --version              Print version information and exit.
+  -m, --mapping=<file>         Path to the file containing the mapping rules.
+  -o, --output=<output>        Path where the output file should be created. As
+                                 a stream-based application the user is
+                                 required to set the format to a RDF
+                                 stream-compatible format or clean the output
+  -f, --format=<format>        Output format for RDF graph. Turtle, RDF/XML,
+                                 N-Triples, etc. Default value: N-Triples.
+  -id, --inferenceDatatypes    Use the inference system for choosing the best
+                                 suited datatype for the generated literal.
+                                 Without this option, and not declaring a
+                                 datatype in the mapping rules, all the
+                                 literals will be outputted as strings
+  -nu, --normaliseURIs         Activate the URI normalisation system which
+                                 allows to avoid malformed URIs when using
+                                 strings for URI creation
+  -h, --help                   Show this help message and exit.
+  -V, --version                Print version information and exit.
 ```
 
 ## Requirements
