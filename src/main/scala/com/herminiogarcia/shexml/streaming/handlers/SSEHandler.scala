@@ -44,7 +44,7 @@ class SSEHandler extends Handler {
   }
 
   private def parseStream(sub: Subscriber[String]): BinaryStream => Task[Unit] = s => {
-    s.transform(MonixServerSentEvents.parse).foreachL(i => {
+    Try(s.transform(MonixServerSentEvents.parse)).toOption.map(_.foreachL(i => {
       logger.info("Event received from the SSE stream")
       logger.debug(s"Event information: $i")
       sub.onNext(convertToDataFormat(i))
@@ -52,7 +52,7 @@ class SSEHandler extends Handler {
       case ExitCase.Error(error) => Task(logger.error(s"Error while processing the SSE stream $error."))
       case ExitCase.Canceled => Task(logger.error(s"The SSE stream was canceled or interrupted."))
       case ExitCase.Completed => Task(logger.info(s"The SSE stream was closed by origin and it has been completely processed."))
-    }
+    }).getOrElse(Task.unit)
   }
 
   private def convertToDataFormat(sse: ServerSentEvent): String = {

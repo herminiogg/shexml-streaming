@@ -15,6 +15,14 @@ services:
       - "8002:8000"
     volumes:
       - ./src/test/resources/sse:/sse
+  sse_json_with_error:
+    build: ./src/test/resources/sse/.
+    container_name: SSE_endpoint_json_with_error
+    command: gunicorn --chdir /sse --bind 0.0.0.0:8000 -w 4 films_sse_json_with_error_flask:app
+    ports:
+      - "8008:8000"
+    volumes:
+      - ./src/test/resources/sse:/sse
   sse_xml:
     build: ./src/test/resources/sse/.
     container_name: SSE_endpoint_xml
