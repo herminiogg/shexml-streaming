@@ -2,17 +2,17 @@ package com.herminiogarcia.shexml.streaming
 
 import com.herminiogarcia.shexml.MappingLauncher
 import com.herminiogarcia.shexml.streaming.handlers.HandlerFactory
-import com.herminiogarcia.shexml.streaming.model.StreamSource
+import com.herminiogarcia.shexml.streaming.model.{KafkaOptions, StreamSource}
 import com.typesafe.scalalogging.Logger
 import monix.eval.Task
 import monix.reactive.Observable
 import org.apache.jena.query.Dataset
-import sttp.client4.UriContext
 import collection.JavaConverters._
 import java.io.ByteArrayInputStream
 
 class StreamMappingLauncher(val inferenceDatatype: Boolean = false,
-                            val normaliseURIs: Boolean = false) {
+                            val normaliseURIs: Boolean = false,
+                            val kakfaOptions: KafkaOptions = KafkaOptions(None, None, consumeFromBeginning = false)) {
 
   private val logger = Logger[StreamMappingLauncher]
 
@@ -29,14 +29,14 @@ class StreamMappingLauncher(val inferenceDatatype: Boolean = false,
     launchMapping(mappingCode, mr => shexmlMappingLauncher.launchMapping(mr))
   }
 
-  private def launchMapping[T](mappingCode: String, shexmlGenerationMethod: String => T): Task[Observable[T]] = {
+  private def launchMapping[T](mappingCode: String,
+                               shexmlGenerationMethod: String => T): Task[Observable[T]] = {
     logger.info(s"Launching mapping")
     logger.debug(s"Input mapping rules $mappingCode")
     parseStreamConfiguration(mappingCode) match {
       case Some(streamSource) =>
-        val handler = HandlerFactory.createFromStreamSource(streamSource)
-        val request = handler.request(uri"${streamSource.url}")
-        request.map(c => {
+        val handler = HandlerFactory.createFromStreamSource(streamSource, kakfaOptions)
+        handler.request.map(c => {
           c.map(i => {
             launchStreamGeneration(mappingCode, streamSource, i, shexmlGenerationMethod)
           })
@@ -49,7 +49,7 @@ class StreamMappingLauncher(val inferenceDatatype: Boolean = false,
   }
 
   private def parseStreamConfiguration(mappingRules: String): Option[StreamSource] = {
-    mappingRules.lines().iterator().asScala.find(_.startsWith("STREAM")).map(l => StreamSource(l.trim.split("\\s+")))
+    mappingRules.lines().iterator().asScala.find(_.startsWith("STREAM")).map(l => StreamSource(l))
   }
 
   private def launchStreamGeneration[T](mappingRules: String, streamSource: StreamSource, eventContent: String, shexmlGenerationMethod: String => T): T = {
