@@ -1,0 +1,15 @@
+PREFIX : <http://example.com/>
+STREAM films_stream <kafka: localhost:9092 -> filmsXml1, filmsXml2>
+ITERATOR film_json <xpath: /films/film> {
+  FIELD id <id>
+  FIELD name <name>
+  FIELD year <year>
+}
+
+EXPRESSION films <films_stream.film_json>
+
+:Films :[films.id] {
+  :type :Film ;
+  :name [films.name] ;
+  :year [films.year] ;
+}

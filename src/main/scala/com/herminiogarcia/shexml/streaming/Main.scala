@@ -2,11 +2,13 @@ package com.herminiogarcia.shexml.streaming
 
 import com.herminiogarcia.shexml.helper.PicocliLeftAlignedLayout
 import com.herminiogarcia.shexml.streaming.helpers.ObservablePrinter
+import com.herminiogarcia.shexml.streaming.model.KafkaOptions
 import monix.execution.Scheduler.Implicits.global
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 
+import java.time.Duration
 import java.util.concurrent.Callable
 
 object Main {
@@ -35,18 +37,31 @@ class Main extends Callable[Int] {
   private var format: String = "N-Triples"
 
   @Option(names = Array("-id", "--inferenceDatatypes"), description = Array("Use the inference system for choosing the best suited datatype for the generated literal. Without this option, and not declaring a datatype in the mapping rules, all the literals will be outputted as strings"))
-  var inferenceDatatype: Boolean = false
+  private var inferenceDatatype: Boolean = false
 
   @Option(names = Array("-nu", "--normaliseURIs"), description = Array("Activate the URI normalisation system which allows to avoid malformed URIs when using strings for URI creation"))
-  var normaliseURIs: Boolean = false
+  private var normaliseURIs: Boolean = false
+
+  @Option(names = Array("--kafkaGroupId"), description = Array("GroupId to be used for consuming Kafka messages."))
+  private var kafkaGroupId: String = ""
+
+  @Option(names = Array("--kafkaPollTimeout"), description = Array("Timeout in ms to be used for polling Kafka messages."))
+  private var kafkaPollTimeout: String = ""
+
+  @Option(names = Array("--kafkaConsumeFromBeginning"), description = Array("Use this option to consume the topic from the beginning."))
+  private var kafkaConsumeFromBeginning: Boolean = false
 
   override def call(): Int = {
     val fileHandler = if(file == "-") scala.io.Source.stdin else scala.io.Source.fromFile(file)
     try {
       val fileContent = fileHandler.mkString
+      val groupId = if(kafkaGroupId.isEmpty) None else Some(kafkaGroupId)
+      val pollTimeout = if(kafkaPollTimeout.isEmpty) None else Some(kafkaPollTimeout).map(_.toInt).map(Duration.ofMillis(_))
+      val kafkaOptions = KafkaOptions(groupId, pollTimeout, kafkaConsumeFromBeginning)
       val streamMappingLauncher = new StreamMappingLauncher(
         inferenceDatatype = inferenceDatatype,
-        normaliseURIs = normaliseURIs
+        normaliseURIs = normaliseURIs,
+        kakfaOptions = kafkaOptions
       )
       val resultAsObservable = streamMappingLauncher.launchMapping(fileContent, format)
       resultAsObservable.flatMap(o => {
