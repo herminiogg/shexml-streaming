@@ -48,6 +48,6 @@ class StreamSourceParser extends JavaTokenParsers {
 
   private def letter: Parser[String] = "[a-zA-Z]".r ^^ { _.toString }
   private def digit: Parser[String] = "[0-9]".r ^^ { _.toString }
-  private def allowedCharacters: Parser[String] = "[$_.+!*'();/?:@=&%#]".r ^^ { _.toString }
+  private def allowedCharacters: Parser[String] = "[$_.+!*'();/?:@=&%#\\-](?!>)".r ^^ { _.toString }
 
 }
