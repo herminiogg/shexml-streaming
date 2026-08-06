@@ -58,3 +58,8 @@ services:
     volumes:
       - ./src/test/resources/websocket:/websocket
     working_dir: /websocket
+  kafka_server:
+    image: apache/kafka:4.1.0
+    container_name: Kafka_server
+    ports:
+      - "9092:9092"

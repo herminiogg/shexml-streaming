@@ -15,12 +15,11 @@ import sttp.capabilities.monix.MonixStreams
 import sttp.client4.impl.monix.MonixWebSockets
 import sttp.client4.ws.stream.asWebSocketStream
 
-class WebsocketHandler extends Handler {
+class WebsocketHandler(val uri: Uri) extends Handler {
 
   private val logger = Logger[WebsocketHandler]
 
-
-  def request(uri: Uri): Task[Observable[String]] = Task {
+  def request: Task[Observable[String]] = Task {
     MonixWebSockets.combinedTextFrames(Observable.create[WebSocketFrame](OverflowStrategy.Unbounded) { sub =>
       val response = HttpClientMonixBackend.resource().use { backend =>
         logger.info("Connecting to Websocket...")

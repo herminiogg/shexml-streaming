@@ -20,11 +20,11 @@ import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
 import scala.util.{Failure, Success, Try}
 
-class SSEHandler extends Handler {
+class SSEHandler(val uri: Uri) extends Handler {
 
   private val logger = Logger[SSEHandler]
 
-  def request(uri: Uri): Task[Observable[String]] = Task {
+  def request: Task[Observable[String]] = Task {
     Observable.create[String](OverflowStrategy.Unbounded) { sub =>
       val response = HttpClientMonixBackend.resource().use { backend =>
         logger.info("Connecting to SSE stream...")
