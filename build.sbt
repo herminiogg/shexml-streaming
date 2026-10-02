@@ -15,10 +15,14 @@ lazy val root = (project in file("."))
       "io.reactivex.rxjava3" % "rxjava" % "3.1.8",
       "info.picocli" % "picocli" % "4.7.7",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
+      "ch.qos.logback" % "logback-classic" % "1.3.5" % Provided,
       "org.apache.kafka" % "kafka-clients" % "3.9.1",
       "org.scala-lang.modules" %% "scala-parser-combinators" % "2.4.0",
       "org.scalatest" %% "scalatest" % "3.2.9" % "test"
     ),
+    // include Provided logback in the CLI
+    Compile / run := Defaults.runTask(Compile / fullClasspath, Compile / run / mainClass, Compile / run / runner).evaluated,
+    assembly / fullClasspath := (Compile / fullClasspath).value,
     assembly / assemblyMergeStrategy := {
       case PathList("META-INF", "services", xs @ _*) => MergeStrategy.concat
       case PathList("META-INF", xs @ _*) => MergeStrategy.discard
